@@ -1,0 +1,56 @@
+=Systemdokumentation=
+
+==verwendete Bibliotheken==
+
+===XML-RPC===
+
+====What is XML-RPC?====
+
+It's a [http://www.xmlrpc.com/ specification] and a set of implementations that allow software running on disparate operating systems, running in different environments to make procedure calls over the Internet. 
+
+It's remote procedure calling using HTTP as the transport and XML as the encoding. XML-RPC is designed to be as simple as possible, while allowing complex data structures to be transmitted, processed and returned.
+
+[[Image:resource/xmlrpc.jpg]]
+
+====Apache XML-RPC====
+
+Apache XML-RPC is a Java implementation of XML-RPC, a popular protocol that uses XML over HTTP to implement remote procedure calls.
+
+Version 3 of Apache XML-RPC is still compliant to the XML-RPC specification. However, the user may enable several vendor extensions are available, that greatly extend the power of XML-RPC:
+
+* All primitive Java types are supported, including long, byte, short, and double.
+* Calendar objects are supported. In particular, timezone settings, and milliseconds may be sent.
+* DOM nodes, or JAXB objects, can be transmitted. So are objects implementing the java.io.Serializable interface.
+* Both server and client can operate in a streaming mode, which preserves resources much better than the default mode, which is based on large internal byte arrays.
+
+===Apache Commons HTTPClient===
+
+The Hyper-Text Transfer Protocol (HTTP) is perhaps the most significant protocol used on the Internet today. Web services, network-enabled appliances and the growth of network computing continue to expand the role of the HTTP protocol beyond user-driven web browsers, while increasing the number of applications that require HTTP support.
+
+Although the java.net package provides basic functionality for accessing resources via HTTP, it doesn't provide the full flexibility or functionality needed by many applications. The Jakarta Commons HttpClient component seeks to fill this void by providing an efficient, up-to-date, and feature-rich package implementing the client side of the most recent HTTP standards and recommendations. Features are:
+
+* Standards based, pure Java, implementation of HTTP versions 1.0 and 1.1
+* Full implementation of all HTTP methods (GET, POST, PUT, DELETE, HEAD, OPTIONS, and TRACE) in an extensible OO framework.
+* Supports encryption with HTTPS (HTTP over SSL) protocol.
+* Granular non-standards configuration and tracking.
+* Transparent connections through HTTP proxies.
+* Tunneled HTTPS connections through HTTP proxies, via the CONNECT method.
+* Transparent connections through SOCKS proxies (version 4 & 5) using native Java socket support.
+* Authentication using Basic, Digest and the encrypting NTLM (NT Lan Manager) methods.
+* Plug-in mechanism for custom authentication methods.
+* Multi-Part form POST for uploading large files.
+* Pluggable secure sockets implementations, making it easier to use third party solutions
+* Connection management support for use in multi-threaded applications. Supports setting the maximum total connections as well as the maximum connections per host. Detects and closes stale connections.
+* Automatic Cookie handling for reading Set-Cookie: headers from the server and sending them back out in a Cookie: header when appropriate.
+* Plug-in mechanism for custom cookie policies.
+* Request output streams to avoid buffering any content body by streaming directly to the socket to the server.
+* Response input streams to efficiently read the response body by streaming directly from the socket to the server.
+* Persistent connections using KeepAlive in HTTP/1.0 and persistance in HTTP/1.1
+* Direct access to the response code and headers sent by the server.
+* The ability to set connection timeouts.
+* HttpMethods implement the Command Pattern to allow for parallel requests and efficient re-use of connections.
+* Source code is freely available under the Apache Software License.
+
+Designed for extension while providing robust support for the base HTTP protocol, the HttpClient component may be of interest to anyone building HTTP-aware client applications such as web browsers, web service clients, or systems that leverage or extend the HTTP protocol for distributed communication.
+
+A very large '''tutorial'''  is included in the current binary distribution of the library. This project uses the older, '''legacy version'''  of HTTPClient for compatibility with the Apache XML-RPC library. 
