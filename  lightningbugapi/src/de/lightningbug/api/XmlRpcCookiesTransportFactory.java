@@ -24,7 +24,7 @@ import org.apache.xmlrpc.client.XmlRpcTransport;
  * @see CookieStore
  * 
  */
-public class XmlRpcCookiesTransportFactory extends XmlRpcCommonsTransportFactory {
+class XmlRpcCookiesTransportFactory extends XmlRpcCommonsTransportFactory {
 
 	private CookieStore cookieStore = null;
 

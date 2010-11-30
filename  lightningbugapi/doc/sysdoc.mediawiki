@@ -54,3 +54,28 @@ Although the java.net package provides basic functionality for accessing resourc
 Designed for extension while providing robust support for the base HTTP protocol, the HttpClient component may be of interest to anyone building HTTP-aware client applications such as web browsers, web service clients, or systems that leverage or extend the HTTP protocol for distributed communication.
 
 A very large '''tutorial'''  is included in the current binary distribution of the library. This project uses the older, '''legacy version'''  of HTTPClient for compatibility with the Apache XML-RPC library. 
+
+==Beispiel==
+===Bug anlegen===
+''email'' und ''password'' müssen natürlich durch die Daten einen gültigen Login ersetzt werden
+
+
+ public static void main(String[] args) {
+    try {
+       final BugzillaClient bugzillaClient = new BugzillaClient(new URL(
+          "http://vwagwos00223:8080/bugzilla-3.6.2/"), "email", "password");
+          
+       if (bugzillaClient.connect()) {
+          final Bug bug = new Bug();
+          bug.setSummary("Benutzer kann einen Programmfehler melden");
+          bug.setDescription("Über den Menüpunkt Hilfe > Fehler melden kann der Nutzer einen  Programmfehler an das Entwicklertem melden.");
+          bug.setProduct("Medusa");
+          bug.setVersion("Alpha 1 (\"Stheno\")");
+          bug.setComponent("!Allgemein");
+          bugzillaClient.create(bug);
+       }
+          bugzillaClient.disconnect();
+    } catch (MalformedURLException e) {
+       e.printStackTrace();
+    }
+ }

@@ -16,7 +16,7 @@ import java.util.Set;
  * @author Sebastian Kirchner
  * 
  */
-public class CookieStore extends HashSet<HttpCookie> {
+class CookieStore extends HashSet<HttpCookie> {
 
 	/**
 	 * Create a cookies strore, that can be used to manage cookies of an HTTP

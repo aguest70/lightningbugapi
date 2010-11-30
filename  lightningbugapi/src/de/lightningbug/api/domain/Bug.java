@@ -1,44 +1,53 @@
-/**
- * 
- */
 package de.lightningbug.api.domain;
 
 import java.beans.PropertyChangeSupport;
 
+import de.lightningbug.api.BugzillaClient;
+
 /**
+ * Instances of the class represent a Bugzilla bug.
+ * 
  * @author Sebastian Kirchner
  * 
+ * @see BugzillaClient#create(BugzillaObject)
  */
-public class Bug {
+public class Bug implements BugzillaObject {
 
 	/**
-	 * Konstante des Namens der Eigenschaft {@link Bug#component}
+	 * Constant for the name of the appropriate bean property
 	 */
 	public static final String COMPONENT = "component"; //$NON-NLS-1$
 
 	/**
-	 * Konstante des Namens der Eigenschaft {@link Bug#description}
+	 * Constant for the name of the appropriate bean property
 	 */
 	public static final String DESCRIPTION = "description"; //$NON-NLS-1$
 
 	/**
-	 * Konstante des Namens der Eigenschaft {@link Bug#product}
+	 * Constant for the name of the appropriate bean property
+	 */
+	public static final String ID = "id"; //$NON-NLS-1$
+
+	/**
+	 * Constant for the name of the appropriate bean property
 	 */
 	public static final String PRODUCT = "product"; //$NON-NLS-1$
 
 	/**
-	 * Konstante des Namens der Eigenschaft {@link Bug#summary}
+	 * Constant for the name of the appropriate bean property
 	 */
 	public static final String SUMMARY = "summary"; //$NON-NLS-1$
 
 	/**
-	 * Konstante des Namens der Eigenschaft {@link Bug#version}
+	 * Constant for the name of the appropriate bean property
 	 */
 	public static final String VERSION = "version"; //$NON-NLS-1$
 
 	private String component;
 
 	private String description;
+
+	private Integer id;
 
 	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
@@ -61,6 +70,13 @@ public class Bug {
 	 */
 	public String getDescription() {
 		return this.description;
+	}
+
+	/**
+	 * @return The id of the bug
+	 */
+	public Integer getId() {
+		return this.id;
 	}
 
 	/**
@@ -103,6 +119,16 @@ public class Bug {
 		final String oldValue = this.description;
 		this.description = description;
 		pcs.firePropertyChange(DESCRIPTION, oldValue, this.description);
+	}
+
+	/**
+	 * @param id
+	 *            The id of the bug
+	 */
+	public void setId(final Integer id) {
+		final Integer oldValue = this.id;
+		this.id = id;
+		pcs.firePropertyChange(ID, oldValue, this.id);
 	}
 
 	/**

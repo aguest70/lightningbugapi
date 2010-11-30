@@ -13,7 +13,7 @@ import org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory;
  * 
  * @author Sebastian Kirchner
  */
-public class XmlRpcClient extends org.apache.xmlrpc.client.XmlRpcClient {
+class XmlRpcClient extends org.apache.xmlrpc.client.XmlRpcClient {
 
 	/**
 	 * Konstante des Namens der Eigenschaft {@link XmlRpcClient#cookieStore}

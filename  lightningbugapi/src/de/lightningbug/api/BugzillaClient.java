@@ -10,14 +10,28 @@ import java.util.Map;
 import org.apache.xmlrpc.XmlRpcException;
 
 import de.lightningbug.api.domain.Bug;
+import de.lightningbug.api.domain.BugzillaObject;
 
 /**
- * TODO Documentation
- * 
+ * <p>
+ * The {@link BugzillaClient} is the Client-Endpoint of the XML-RPC-Connection.
+ * It's used to connect to a certain Bugzilla 3.6+ instance. In oder to d that,
+ * a base URL, username and password must be provided.
+ * </p>
+ * <p>
+ * After login Bugzilla-Objects can be created using the "create"-method (e.g.
+ * {@link BugzillaClient#create(Bug)})
+ * </p>
  * <p>
  * Setting a new username or password is possible, but only if the client is
  * disconnected ({@link BugzillaClient#isConnected()}).
  * </p>
+ * 
+ * @see BugzillaClient
+ * @see BugzillaClient#connect()
+ * @see BugzillaClient#setUserName(String)
+ * @see BugzillaClient#setPassword(String)
+ * @see BugzillaClient#create(BugzillaObject)
  * 
  * @author Sebastian Kirchner
  * 
@@ -38,30 +52,6 @@ public class BugzillaClient {
 	 * Konstante des Namens der Eigenschaft {@link BugzillaClient#userName}
 	 */
 	public static final String USER_NAME = "userName"; //$NON-NLS-1$
-
-	public static void main(String[] args) {
-		try {
-			final BugzillaClient bugzillaClient = new BugzillaClient(new URL(
-					"http://host:8080/bugzilla-3.6.2/"),
-					"username", "password");
-			if (bugzillaClient.connect()) {
-
-				final Bug bug = new Bug();
-				bug.setSummary("Benutzer kann einen Programmfehler melden");
-				bug.setDescription("Über den Menüpunkt Hilfe > Fehler melden kann der Nutzer einen Programmfehler an das Entwicklertem melden.");
-				bug.setProduct("Medusa");
-				bug.setVersion("Alpha 1 (\"Stheno\")");
-				bug.setComponent("!Allgemein");
-
-				bugzillaClient.create(bug);
-				bugzillaClient.disconnect();
-			}
-
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 
 	private java.net.URL apiURL;
 
@@ -107,7 +97,19 @@ public class BugzillaClient {
 	}
 
 	/**
-	 * @return
+	 * Output of the version nummer of this API.
+	 * 
+	 * @param args unused
+	 */
+	public static void main(String[] args) {
+		System.out.println("LightningBug API version 3.6.2 (2010-11-30)");
+	}
+	
+	/**
+	 * Open the connection to the bugzilla instance
+	 * 
+	 * @return <code>true</code> if the connection was established, otherwise
+	 *         <code>false</code>.
 	 */
 	public boolean connect() {
 		try {
@@ -126,7 +128,10 @@ public class BugzillaClient {
 	}
 
 	/**
-	 * @return
+	 * Disconnnect the {@link BugzillaClient} from the bugzilla instance.
+	 * 
+	 * @return <code>true</code> if the connection was closed successfully,
+	 *         otherwise <code>false</code>.
 	 */
 	public boolean disconnect() {
 		if (!this.isConnected()) {
@@ -146,31 +151,52 @@ public class BugzillaClient {
 	}
 
 	/**
-	 * @param bug
-	 *            the Bug to create
-	 * @return the bug id, if the creation of the bug was sucessful,
-	 *         <code>null</code> otherwise.
+	 * Creates the given object in bugzilla. If the object has been successfully
+	 * created, <code>true</code> will be returned.
+	 * <p>
+	 * If a {@link Bug} object has been created, the given bug object will
+	 * contain the bug id provided by bugzilla
+	 * </p>
+	 * 
+	 * @param <T>
+	 *            Type of the object, that should be created (e.g. {@link Bug})
+	 * @param t
+	 *            the object, that should be created in bugzilla
+	 * @return <code>true</code> if the creation succeeded. In that case the
+	 *         given object might be enhanced with information provided by
+	 *         bugzilla depending on the type of object. The method will return
+	 *         <code>false</code>, if the creation failed.
 	 */
-	public Integer create(final Bug bug) {
+	public <T extends BugzillaObject> boolean create(final T t) {
+		if (t instanceof Bug) {
+			return createBug((Bug) t);
+		}
+		return false;
+	}
 
+	private boolean createBug(final Bug bug) {
 		try {
 			final Object result = this.exec("Bug.create", "product", bug.getProduct(), "component",
 					bug.getComponent(), "summary", bug.getSummary(), "version", bug.getVersion(),
 					"description", bug.getDescription());
 			if (result instanceof Map) {
-				Object id = ((Map<?, ?>) result).get("id");
-				if (id instanceof Number) {
-					return ((Number) id).intValue();
+				Object idParam = ((Map<?, ?>) result).get("id"); //$NON-NLS-1$
+				if (idParam instanceof Number) {
+					final Integer id = ((Number) idParam).intValue();
+					bug.setId(id);
+					return true;
 				}
 			}
 		} catch (XmlRpcException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		return false;
 	}
 
 	/**
+	 * TODO document!!!
+	 * 
 	 * @param methodName
 	 * @param paramNamesAndValues
 	 * @return
@@ -189,16 +215,20 @@ public class BugzillaClient {
 	}
 
 	/**
-	 * Gibt den Wert der Eigenschaft {@link BugzillaClient#password} zurück.
+	 * Getter for the password used to connect to bugzilla.
 	 * 
-	 * @return der Wert der Eigenschaft {@link BugzillaClient#password}
+	 * @return the password used to connect to bugzilla.
+	 * 
+	 * @see BugzillaClient#setPassword(String)
 	 */
 	public String getPassword() {
 		return this.password;
 	}
 
 	/**
-	 * Gibt den Wert der Eigenschaft {@link BugzillaClient#url} zurück.
+	 * Setter for the HTTP URL of the bugzilla instance this client sould
+	 * connect to. This property can only be set once for a
+	 * {@link BugzillaClient} via constructor.
 	 * 
 	 * @return der Wert der Eigenschaft {@link BugzillaClient#url}
 	 */
@@ -207,9 +237,12 @@ public class BugzillaClient {
 	}
 
 	/**
-	 * Gibt den Wert der Eigenschaft {@link BugzillaClient#userName} zurück.
+	 * Getter for the user name used to connect to bugzilla (e.g. the email
+	 * address of the user).
 	 * 
-	 * @return der Wert der Eigenschaft {@link BugzillaClient#userName}
+	 * @return the user name used to connect to bugzilla
+	 * 
+	 * @see BugzillaClient#setUserName(String)
 	 */
 	public String getUserName() {
 		return this.userName;
@@ -223,55 +256,57 @@ public class BugzillaClient {
 	}
 
 	/**
-	 * @return
+	 * @return <code>true</code> if this {@link BugzillaClient} is currently
+	 *         connected to the bugzilla instance addressed by the
+	 *         {@link BugzillaClient#getURL()}. Otherwise <code>false</code>
+	 *         will be returned.
+	 * 
+	 * @see BugzillaClient#connect()
+	 * @see BugzillaClient#disconnect()
 	 */
 	public boolean isConnected() {
 		return this.connected;
 	}
 
-	/**
-	 * Setzt den Wert der Eigenschaft {@link BugzillaClient#password}.
+/**
+	 * Setter for the password used to connect to bugzilla. Setting the password
+	 * will only work, if the client is disconnected ({@link BugzillaClient#isConnected()).
 	 * 
 	 * @param password
-	 *            der Wert der Eigenschaft {@link BugzillaClient#password}
+	 *            the password used to connect to bugzilla.
+	 * 
+	 * @see BugzillaClient#getPassword()
+	 * @see BugzillaClient#connect()
+	 * @see BugzillaClient#isConnected()
+	 * @see BugzillaClient#disconnect()
 	 */
 	public void setPassword(final String password) {
 		if (this.isConnected()) {
 			throw new IllegalStateException(
-					"A new username or password can onmly be set when the client is disconnected");
+					"A new username or password can only be set when the client is disconnected"); //$NON-NLS-1$
 		}
 		final String oldValue = this.password;
 		this.password = password;
 		pcs.firePropertyChange(PASSWORD, oldValue, this.password);
 	}
 
-	// ////////TEST
-
-	// public void getBug1() {
-	// try {
-	// final Map map = (Map) exec("Bug.get", "ids", "1");
-	// for (final Object key : map.keySet()) {
-	// final Object[] objs = (Object[]) map.get(key);
-	// for (Object object : objs) {
-	// System.out.println(object);
-	// }
-	// }
-	// } catch (XmlRpcException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// }
-
-	/**
-	 * Setzt den Wert der Eigenschaft {@link BugzillaClient#userName}.
+/**
+	 * Setter for the user name used to connect to bugzilla (e.g. the email
+	 * address of the user). Setting the user name
+	 * will only work, if the client is disconnected ({@link BugzillaClient#isConnected()).
 	 * 
 	 * @param userName
-	 *            der Wert der Eigenschaft {@link BugzillaClient#userName}
+	 *            the user name used to connect to bugzilla
+	 * 
+	 * @see BugzillaClient#getUserName()
+	 * @see BugzillaClient#connect()
+	 * @see BugzillaClient#isConnected()
+	 * @see BugzillaClient#disconnect()
 	 */
 	public void setUserName(final String userName) {
 		if (this.isConnected()) {
 			throw new IllegalStateException(
-					"A new username or password can onmly be set when the client is disconnected");
+					"A new username or password can only be set when the client is disconnected"); //$NON-NLS-1$
 		}
 		final String oldValue = this.userName;
 		this.userName = userName;
