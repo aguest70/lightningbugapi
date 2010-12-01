@@ -1,0 +1,10 @@
+#summary How to use this stuff?
+#labels Documentation
+
+= Introduction =
+
+The first version (actually version 3.6 - version number according to the supported bugzilla version) of the API has been released. This page is meant as a brief how-to use this stuff.
+
+= Details =
+
+ 1. Fisrt of all download the library
