@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Created-By: Sebastian Kirchner (TSV Berßel 1912 e.V.)
+Implementation-Title: LightningBugAPI
+Implementation-Version: 3.6.v20101201
+Implementation-Vendor: TSV Berßel 1912 e.V.
+Implementation-URL: http://code.google.com/p/lightningbugapi
