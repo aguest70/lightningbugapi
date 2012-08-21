@@ -3,7 +3,7 @@
 
 =Local Cache=
 
- _The folling feature will ship with the nex version of the LightningBugAPI and is subject to change_
+ _The following feature will ship with the nex version of the LightningBugAPI 4.0.1 and is subject to change_
 
 When the client is connected to a Bugzilla instance (identified by the URL) it will store a local copy of the product configuration (including components, severity, versions, target milestones and so on) of the instance in a xml file, called the local cache.
 
