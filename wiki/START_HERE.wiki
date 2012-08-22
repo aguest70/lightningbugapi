@@ -19,3 +19,7 @@ The 2nd version (current version  4.0.1v20120822 - version number according to t
  # [example_connect Log in to Bugzilla]
  # [example_get_products Query product(s) configuration]
  # [example_search_bugs Search for bugs]
+
+=Links to other interesting resources=
+
+ * http://code.google.com/p/j2bugzilla/
