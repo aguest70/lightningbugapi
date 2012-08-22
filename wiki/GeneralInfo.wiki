@@ -10,35 +10,8 @@ The first version (actually version 3.6 - version number according to the suppor
  # First of all download the binary distribution from the download section
  # Extract the content of the archive
  # Place the LightningBug-API-library and the required third-party-libraries into your classpath
- # Follow the samples below to access bugzilla
+ # Follow the samples below to access bugzilla...
 
-= Code Examples =
-
-== Create a bug ==
-
-The strings `email`, `password`, `product_name`, `version_name` and `component_name` have to be replaced by valid values from your bugzilla instance.
-
-{{{
- public static void main(String[] args) {
-    try {
-       final BugzillaClient bugzillaClient = new BugzillaClient(new URL(
-          "http://vwagwos00223:8080/bugzilla-3.6.2/"), "email", "password");
-          
-       if (bugzillaClient.connect()) {
-          final Bug bug = new Bug();
-          bug.setSummary("Benutzer kann einen Programmfehler melden");
-          bug.setDescription("Über den Menüpunkt Hilfe > Fehler melden kann der Nutzer einen Programmfehler an das Entwicklertem melden.");
-          bug.setProduct("product_name");
-          bug.setVersion("version_name");
-          bug.setComponent("component_name");
-          bugzillaClient.create(bug);
-          bugzillaClient.disconnect();
-       }
-    } catch (MalformedURLException e) {
-       e.printStackTrace();
-    }
- }
-}}}
 
 == Query all products ==
 {{{
