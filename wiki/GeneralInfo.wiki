@@ -1,19 +1,16 @@
-#summary How to use this stuff?
+#summary Introduction
 #labels Documentation
 
 = Introduction =
 
-The first version (actually version 3.6 - version number according to the supported bugzilla version) of the API has been released. This page is meant as a brief how-to use this stuff.
+The 2nd version (current version  4.0.1v20120822 - version number according to the supported bugzilla version plus the build date) of the API has been released. This page is meant as a brief how-to set up this stuff.
 
 = Details =
 
  # First of all download the binary distribution from the download section
- # Extract the content of the archive
- # Place the LightningBug-API-library and the required third-party-libraries into your classpath
- # Follow the samples below to access bugzilla...
+ # Extract the content of the archive (the archive contains the jar with the binary files and a `lib` folder with the required third party libraries)
+ # Place the LightningBug-API-jar and the required libraries into your classpath
+ # Follow the samples below to connect to bugzilla and query product information or search for bugs
 
-
-== Query all products ==
-{{{
- final List<Product> all = client.getAll(Product.class);
-}}}
+=Samples=
+ # [Example_connect Login to Bugzilla]   
