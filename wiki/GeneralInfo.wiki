@@ -13,4 +13,6 @@ The 2nd version (current version  4.0.1v20120822 - version number according to t
  # Follow the samples below to connect to bugzilla and query product information or search for bugs
 
 =Samples=
- # [Example_connect Login to Bugzilla]   
+ # [example_connect Login to Bugzilla]
+ # [example_get_products Query product(s) configuration]
+ # [example_search_bugs Search for bugs]
