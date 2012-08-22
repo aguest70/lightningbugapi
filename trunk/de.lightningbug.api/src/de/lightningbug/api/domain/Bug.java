@@ -2,6 +2,7 @@ package de.lightningbug.api.domain;
 
 import java.beans.PropertyChangeSupport;
 import java.text.MessageFormat;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -12,10 +13,10 @@ import de.lightningbug.api.BugzillaClient;
  * 
  * @author Sebastian Kirchner
  * 
- * @see BugzillaClient#create(BugzillaObject)
+ * @see BugzillaClient#create(IBugzillaObject)
  */
 @XmlRootElement
-public class Bug implements BugzillaObject, Comparable<Bug> {
+public class Bug implements Comparable<Bug> {
 
 	/**
 	 * Constant for the name of the appropriate bean property
@@ -53,6 +54,33 @@ public class Bug implements BugzillaObject, Comparable<Bug> {
 	public static final String VERSION = "version"; //$NON-NLS-1$
 
 	/**
+	 * Konstante des Namens der Eigenschaft {@link Bug#dependsOn}
+	 */
+	public static final String DEPENDS_ON = "dependsOn"; //$NON-NLS-1$
+
+	private Set<Bug> dependsOn;
+
+	/**
+	 * Gibt den Wert der Eigenschaft {@link Bug#dependsOn} zurück.
+	 * 
+	 * @return der Wert der Eigenschaft {@link Bug#dependsOn}
+	 */
+	public Set<Bug> getDependsOn() {
+		return this.dependsOn;
+	}
+
+	/**
+	 * Setzt den Wert der Eigenschaft {@link Bug#dependsOn}.
+	 * 
+	 * @param dependsOn
+	 *            der Wert der Eigenschaft {@link Bug#dependsOn}
+	 */
+	public void setDependsOn(final Set<Bug> dependsOn) {
+		final Set<Bug> oldValue = this.dependsOn;
+		this.dependsOn = dependsOn;
+	}
+
+	/**
 	 * Constant for the name of the appropriate bean property
 	 */
 	public static final String ESTIMATED_TIME = "estimatedTime"; //$NON-NLS-1$
@@ -69,11 +97,11 @@ public class Bug implements BugzillaObject, Comparable<Bug> {
 
 	private Product product;
 
-	private Severity severity;
+	private String severity;
 
 	private String summary;
 
-	private Version version;
+	private String version;
 
 	/**
 	 * @return The name of a component in the product
@@ -114,7 +142,7 @@ public class Bug implements BugzillaObject, Comparable<Bug> {
 	/**
 	 * @return the severity of the bug
 	 */
-	public Severity getSeverity() {
+	public String getSeverity() {
 		return this.severity;
 	}
 
@@ -128,7 +156,7 @@ public class Bug implements BugzillaObject, Comparable<Bug> {
 	/**
 	 * @return The version of the product the bug was found in.
 	 */
-	public Version getVersion() {
+	public String getVersion() {
 		return this.version;
 	}
 
@@ -160,6 +188,10 @@ public class Bug implements BugzillaObject, Comparable<Bug> {
 	 * Example:
 	 * 
 	 * <pre>
+	 * 
+	 * 
+	 * 
+	 * 
 	 * final List&lt;Severity&gt; severities = client.getAll(Severity.class);
 	 * </pre>
 	 * 
@@ -168,8 +200,8 @@ public class Bug implements BugzillaObject, Comparable<Bug> {
 	 * @param severity
 	 *            the severity of the bug
 	 */
-	public void setSeverity(final Severity severity) {
-		final Severity oldValue = this.severity;
+	public void setSeverity(final String severity) {
+		final String oldValue = this.severity;
 		this.severity = severity;
 		pcs.firePropertyChange(SEVERITY, oldValue, this.severity);
 	}
@@ -203,14 +235,18 @@ public class Bug implements BugzillaObject, Comparable<Bug> {
 	 * Example:
 	 * 
 	 * <pre>
+	 * 
+	 * 
+	 * 
+	 * 
 	 * final List&lt;Product&gt; products = client.getAll(Product.class);
 	 * </pre>
 	 * 
 	 * </p>
 	 * <p>
-	 * If the version field ({@link Bug#setVersion(Version)}) of this bug has
-	 * been set before and the given product doesn't ship in the predefined
-	 * version, the property {@link Bug#version} is set to <code>null</code>.
+	 * If the version field ({@link Bug#setVersion(Version)}) of this bug has been set before and
+	 * the given product doesn't ship in the predefined version, the property {@link Bug#version} is
+	 * set to <code>null</code>.
 	 * </p>
 	 * 
 	 * @param product
@@ -220,8 +256,8 @@ public class Bug implements BugzillaObject, Comparable<Bug> {
 		final Product oldValue = this.product;
 		this.product = product;
 		pcs.firePropertyChange(PRODUCT, oldValue, this.product);
-		if (this.getVersion() != null && product != null
-				&& !product.getVersions().contains(this.getVersion())) {
+		if(this.getVersion() != null && product != null
+				&& !product.getVersions().contains(this.getVersion())){
 			this.setVersion(null);
 		}
 	}
@@ -247,14 +283,14 @@ public class Bug implements BugzillaObject, Comparable<Bug> {
 	 *             if the given version doesn't match a version of the
 	 *             previously defined product ({@link Bug#setProduct(Product)})
 	 */
-	public void setVersion(final Version version) {
+	public void setVersion(final String version) {
 		// version must match one of the versions of the associated product if
 		// product and version is not null
-		if (this.getProduct() != null && this.version != null
-				&& !this.getProduct().getVersions().contains(version)) {
+		if(this.getProduct() != null && this.version != null
+				&& !this.getProduct().getVersions().contains(version)){
 			final String pattern = "The product {0} doesn't ship in the version {1}";
 			final String message = MessageFormat.format(pattern, this.getProduct().getName(),
-					version.getName());
+					version);
 			throw new IllegalArgumentException(message);
 		}
 		final Object oldValue = this.version;
@@ -291,10 +327,10 @@ public class Bug implements BugzillaObject, Comparable<Bug> {
 
 	@Override
 	public int compareTo(final Bug bug) {
-		if (bug == null)
+		if(bug == null)
 			return 0;
-		if (this.getId() == null) {
-			if (bug.getId() == null) {
+		if(this.getId() == null){
+			if(bug.getId() == null){
 				return 0;
 			}
 			return -1;

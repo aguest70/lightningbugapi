@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.lightningbug.api;
+package de.lightningbug.api.xmlrpc;
 
 import java.net.URL;
 
@@ -13,7 +13,7 @@ import org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory;
  * 
  * @author Sebastian Kirchner
  */
-class XmlRpcClient extends org.apache.xmlrpc.client.XmlRpcClient {
+public class XmlRpcClient extends org.apache.xmlrpc.client.XmlRpcClient {
 
 	/**
 	 * Konstante des Namens der Eigenschaft {@link XmlRpcClient#cookieStore}

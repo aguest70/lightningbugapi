@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.lightningbug.api;
+package de.lightningbug.api.xmlrpc;
 
 import java.net.HttpCookie;
 import java.net.URLConnection;
@@ -16,7 +16,7 @@ import java.util.Set;
  * @author Sebastian Kirchner
  * 
  */
-class CookieStore extends HashSet<HttpCookie> {
+public class CookieStore extends HashSet<HttpCookie> {
 
 	/**
 	 * Create a cookies strore, that can be used to manage cookies of an HTTP

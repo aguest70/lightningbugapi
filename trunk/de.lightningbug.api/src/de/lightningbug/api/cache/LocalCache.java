@@ -1,5 +1,6 @@
-package de.lightningbug.api;
+package de.lightningbug.api.cache;
 
+import java.awt.Component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,15 +18,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.lightningbug.api.domain.Component;
-import de.lightningbug.api.domain.Milestone;
+import de.lightningbug.api.BugzillaClient;
 import de.lightningbug.api.domain.Product;
-import de.lightningbug.api.domain.Version;
+import de.lightningbug.api.service.ProductService;
 
 /**
  * The local cache is used to store bugzilla objects, like {@link Product}s,
  * {@link Component}s, {@link Version}s and {@link Milestone}s. The necessary
- * initial query for those objects {@link ProductFactory#getProducts()} could
+ * initial query for those objects {@link ProductService#getProducts()} could
  * take some time. The store makes it possible share these objects between
  * bugzilla sessions without queriing them each time.
  * <p>
@@ -216,8 +216,7 @@ public class LocalCache {
 
 	private static JAXBContext getContext() throws JAXBException {
 		if (context == null) {
-			context = JAXBContext.newInstance(Cache.class, Connection.class, Product.class,
-					Version.class, Component.class, Milestone.class);
+			context = JAXBContext.newInstance(Cache.class, Connection.class, Product.class);
 		}
 		return context;
 	}
