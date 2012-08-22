@@ -93,11 +93,29 @@ public class BugzillaClient extends XmlRpcClient {
 	 */
 	public BugzillaClient(final java.net.URL url, final String userName, final String password)
 			throws MalformedURLException {
-		// Constructing the API-URL needed to configure the XML-RPC-Client
-		super(new URL(url.toString() + "xmlrpc.cgi")); //$NON-NLS-1$
+		super(createAPIURL(url)); //$NON-NLS-1$
 		this.url = url;
 		this.userName = userName;
 		this.password = password;
+	}
+
+	/**
+	 * Constructing the API-URL needed to configure the XML-RPC-Client
+	 * 
+	 * @param url
+	 *            the URL to the bugzilla installation
+	 * @return the apiURL needed for the XMLRPCClient
+	 * @throws MalformedURLException
+	 *             if the URL cannot be created becase the given URL has an unknown protocol or
+	 *             could not be parsed
+	 */
+	private static URL createAPIURL(final URL url) throws MalformedURLException {
+		String urlString = url.toString();
+		// add a slash to the end, if it's not there
+		if(!urlString.endsWith("/")){
+			urlString = urlString.concat("/");
+		}
+		return new URL(urlString + "xmlrpc.cgi");
 	}
 
 	/**
