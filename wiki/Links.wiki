@@ -1,5 +1,0 @@
-#summary Links to other interesting resources
-
-=Links to other interesting resources=
-
-http://code.google.com/p/j2bugzilla/
