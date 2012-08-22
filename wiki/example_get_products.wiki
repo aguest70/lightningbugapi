@@ -1,7 +1,7 @@
 #summary How to query information about the products of the Bugzilla instance
 
 {{{
-//Connect to bugzilla
+//connect to bugzilla
 final BugzillaClient client = new BugzillaClient(new URL("http://host/bugzilla-4.0.1/"), "email@host.de","password");
 
 //create the product service an query all products
