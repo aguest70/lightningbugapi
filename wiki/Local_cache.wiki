@@ -13,4 +13,4 @@ A thread in the background will update the local config soon after the client co
 
 Because the puduct configuration of a Bugzilla instance doesn't change very often, this approach will save a lot of time at startup.
 
-The xml file contaning the local cache is saved in the home folder of the current user (depending on the value of the Java system property `user.home`). The location of the xml file can be configured in the `application.properties` of the LightningBugAPI. 
+The xml file contaning the local cache is saved in the home folder of the current user (depending on the value of the Java system property `user.home`). 
