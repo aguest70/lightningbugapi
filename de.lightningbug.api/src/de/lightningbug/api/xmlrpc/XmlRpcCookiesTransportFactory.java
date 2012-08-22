@@ -1,4 +1,4 @@
-package de.lightningbug.api;
+package de.lightningbug.api.xmlrpc;
 
 import java.io.IOException;
 import java.net.URL;
@@ -11,6 +11,8 @@ import org.apache.xmlrpc.client.XmlRpcClientException;
 import org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory;
 import org.apache.xmlrpc.client.XmlRpcSunHttpTransport;
 import org.apache.xmlrpc.client.XmlRpcTransport;
+
+import de.lightningbug.api.BugzillaClient;
 
 /**
  * A cookie-aware implementation of an
