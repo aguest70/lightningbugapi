@@ -4,14 +4,18 @@ import java.beans.PropertyChangeSupport;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xmlrpc.XmlRpcException;
 
 import de.lightningbug.api.domain.Bug;
+import de.lightningbug.api.domain.User;
 import de.lightningbug.api.xmlrpc.XmlRpcClient;
 
 /**
@@ -214,14 +218,22 @@ public class BugzillaClient extends XmlRpcClient {
 	}
 
 	/**
-	 * TODO document!!!
+	 * <b>Example:</b>
+	 * <pre>
+	 * HashMap&lt;String, Object&gt; params = new HashMap&lt;String, Object&gt;();
+	 * params.put(&quot;match&quot;, new Object[] { &quot;Max&quot;, &quot;Moritz&quot; });
+	 * params.put(&quot;include_disabled&quot;, true); 
+	 * bugzillaClient.execute(&quot;User.get&quot;, params); 
+	 * </pre>
 	 * 
 	 * @param methodName
-	 * @param paramNamesAndValues
+	 * @param params
+	 *            a Map of parameter names (Strings) an their corresponing value(s). If a parameter
+	 *            has multiple values package them into an object array.
 	 * @return
 	 * @throws XmlRpcException
 	 */
-	public Object execute(final String methodName, final Map<String, Object[]> params)
+	public Object execute(final String methodName, final Map<String, Object> params)
 			throws XmlRpcException {
 
 		// build the stuct
