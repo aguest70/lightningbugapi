@@ -178,29 +178,6 @@ public class BugzillaClient extends XmlRpcClient {
 		return true;
 	}
 
-	// TODO reactivate
-	// private boolean createBug(final Bug bug) {
-	// try{
-	// final Object result = this.exec("Bug.create", Bug.PRODUCT, bug.getProduct(),
-	// Bug.COMPONENT, bug.getComponent(), Bug.SUMMARY, bug.getSummary(), Bug.VERSION,
-	// bug.getVersion(), Bug.DESCRIPTION, bug.getDescription(), Bug.SEVERITY, bug
-	// .getSeverity());
-	//
-	// if(result instanceof Map){
-	//				Object idParam = ((Map<?, ?>) result).get("id"); //$NON-NLS-1$
-	// if(idParam instanceof Number){
-	// final Integer id = ((Number) idParam).intValue();
-	// bug.setId(id);
-	// return true;
-	// }
-	// }
-	// }catch(XmlRpcException e){
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// return false;
-	// }
-
 	/**
 	 * TODO document!!!
 	 * 
@@ -215,11 +192,12 @@ public class BugzillaClient extends XmlRpcClient {
 
 	/**
 	 * <b>Example:</b>
+	 * 
 	 * <pre>
 	 * HashMap&lt;String, Object&gt; params = new HashMap&lt;String, Object&gt;();
 	 * params.put(&quot;match&quot;, new Object[] { &quot;Max&quot;, &quot;Moritz&quot; });
-	 * params.put(&quot;include_disabled&quot;, true); 
-	 * bugzillaClient.execute(&quot;User.get&quot;, params); 
+	 * params.put(&quot;include_disabled&quot;, true);
+	 * bugzillaClient.execute(&quot;User.get&quot;, params);
 	 * </pre>
 	 * 
 	 * @param methodName
