@@ -4,18 +4,14 @@ import java.beans.PropertyChangeSupport;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xmlrpc.XmlRpcException;
 
 import de.lightningbug.api.domain.Bug;
-import de.lightningbug.api.domain.User;
 import de.lightningbug.api.xmlrpc.XmlRpcClient;
 
 /**
