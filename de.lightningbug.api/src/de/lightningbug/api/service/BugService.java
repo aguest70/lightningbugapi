@@ -91,7 +91,7 @@ public class BugService extends AbstractService {
 						newBug.setSeverity((String) bug.get(key));
 						LOG.debug("Property <severity> populated with: " + newBug.getSeverity()); //$NON-NLS-1$
 					}
-					
+
 					if("estimated_time".equals(key)){ //$NON-NLS-1$
 						newBug.setEstimatedTime((Double) bug.get(key));
 						LOG.debug("Property <estimated_time> populated with: " + newBug.getEstimatedTime()); //$NON-NLS-1$
@@ -193,4 +193,35 @@ public class BugService extends AbstractService {
 		return new LinkedList<String>();
 	}
 
+	/**
+	 * @param bug
+	 * @return
+	 */
+	public boolean create(final Bug bug) {
+		try{
+
+			final Map<String, Object> params = new HashMap<String, Object>();
+			params.put(Bug.PRODUCT, bug.getProduct());
+			params.put(Bug.COMPONENT, bug.getComponent());
+			params.put(Bug.SUMMARY, bug.getSummary());
+			params.put(Bug.VERSION, bug.getVersion());
+			params.put(Bug.DESCRIPTION, bug.getDescription());
+			params.put(Bug.SEVERITY, bug.getSeverity());
+
+			final Object result = this.client.execute("Bug.create", params);
+
+			if(result instanceof Map){
+				Object idParam = ((Map<?, ?>) result).get("id"); //$NON-NLS-1$
+				if(idParam instanceof Number){
+					final Integer id = ((Number) idParam).intValue();
+					bug.setId(id);
+					return true;
+				}
+			}
+		}catch(XmlRpcException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
 }
