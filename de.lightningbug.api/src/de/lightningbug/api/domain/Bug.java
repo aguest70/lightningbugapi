@@ -77,7 +77,7 @@ public class Bug implements Comparable<Bug> {
 
 	private String component;
 
-	private Set<Bug> dependsOn;
+	private Set<Integer> dependsOn;
 
 	private String description;
 
@@ -128,11 +128,9 @@ public class Bug implements Comparable<Bug> {
 	}
 
 	/**
-	 * Gibt den Wert der Eigenschaft {@link Bug#dependsOn} zurück.
-	 * 
-	 * @return der Wert der Eigenschaft {@link Bug#dependsOn}
+	 * @return a list of id's of the bugs this bug depends on
 	 */
-	public Set<Bug> getDependsOn() {
+	public Set<Integer> getDependsOn() {
 		return this.dependsOn;
 	}
 
@@ -221,8 +219,8 @@ public class Bug implements Comparable<Bug> {
 	 * @param dependsOn
 	 *            der Wert der Eigenschaft {@link Bug#dependsOn}
 	 */
-	public void setDependsOn(final Set<Bug> dependsOn) {
-		final Set<Bug> oldValue = this.dependsOn;
+	public void setDependsOn(final Set<Integer> dependsOn) {
+		final Set<Integer> oldValue = this.dependsOn;
 		this.dependsOn = dependsOn;
 		this.pcs.firePropertyChange(DEPENDS_ON, oldValue, this.dependsOn);
 	}
