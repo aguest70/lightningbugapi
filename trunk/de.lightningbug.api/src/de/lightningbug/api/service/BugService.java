@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,13 +20,16 @@ import de.lightningbug.api.util.HashArray.NoHashArrayException;
 
 /**
  * TODO Complete documentation!
- *
+ * 
  * @author Sebastian Kirchner (AutoVision GmbH)
- *
+ * 
  */
 public class BugService extends AbstractService {
 
 	protected final static Log LOG = LogFactory.getLog(ProductService.class);
+
+	public static final String BUG_SEARCH_FIELD_SEVERITY = "severity"; //$NON-NLS-1$
+	public static final String BUG_SEARCH_FIELD_ID = "id"; //$NON-NLS-1$
 
 	/**
 	 * TODO isn't that stored in the cache???
@@ -32,7 +37,7 @@ public class BugService extends AbstractService {
 	 * Cache for the names and the legal values of all bug fields
 	 */
 	private HashArray legalBugFields = null;
-	
+
 	/**
 	 * @param client
 	 *            the client used by the service to query information from the
@@ -59,24 +64,34 @@ public class BugService extends AbstractService {
 		final List<Bug> results = new ArrayList<Bug>();
 
 		try{
-			//search for the bugs
-			final HashArray bugs = new HashArray(
-			// TODO may be null
-					((Map<?, ?>) this.client.execute("Bug.search", params)).get("bugs")); //$NON-NLS-1$ //$NON-NLS-2$
+			// search for the bugs
+			final Object execResult = ((Map<?, ?>) this.client.execute("Bug.search", params))
+					.get("bugs");
+			if(execResult == null
+					|| (execResult.getClass().isArray() && ((Object[]) execResult).length == 0)){
+				LOG.warn("Search was not successful: " + searchParams);
+				return new LinkedList<Bug>();
+			}
+			final HashArray bugs = new HashArray(execResult); //$NON-NLS-1$ //$NON-NLS-2$
 
 			final Map<String, User> userCache = new HashMap<String, User>();
 			final UserService userService = new UserService(this.client);
-						
+
 			// create bug objects 4 every item in the array
 			for(final Map<?, ?> bug : bugs){
 				final Bug newBug = new Bug();
 				results.add(newBug);
-				
+
 				for(final Object key : bug.keySet()){
 					if("summary".equals(key)){ //$NON-NLS-1$
 						newBug.setSummary((String) bug.get(key));
 						LOG.debug("Property <summary> populated with: " + newBug.getSummary()); //$NON-NLS-1$
 					}
+					if("severity".equals(key)){ //$NON-NLS-1$
+						newBug.setSeverity((String) bug.get(key));
+						LOG.debug("Property <severity> populated with: " + newBug.getSeverity()); //$NON-NLS-1$
+					}
+					
 					if("estimated_time".equals(key)){ //$NON-NLS-1$
 						newBug.setEstimatedTime((Double) bug.get(key));
 						LOG.debug("Property <estimated_time> populated with: " + newBug.getEstimatedTime()); //$NON-NLS-1$
@@ -90,15 +105,27 @@ public class BugService extends AbstractService {
 						LOG.debug("Property <status> populated with: " + newBug.getId()); //$NON-NLS-1$
 					}
 					if("assigned_to".equals(key)){ //$NON-NLS-1$
-						
-						final String loginName = (String) bug.get(key);
-						User user = userCache.get(loginName);
-						if(user == null){
-							user = userService.getUser(loginName);
-							userCache.put(loginName, user);
+
+						if(!this.client.isLoggedIn()){
+							LOG.info("BugzillaClient is not logged in. Users cannot be queried. Property <assignee> cannot be populated.");
+						}else{
+							final String loginName = (String) bug.get(key);
+							User user = userCache.get(loginName);
+							if(user == null){
+								user = userService.getUser(loginName);
+								userCache.put(loginName, user);
+							}
+							newBug.setAssignee(user);
+							LOG.debug("Property <assignee> populated with: " + newBug.getAssignee()); //$NON-NLS-1$
 						}
-						newBug.setAssignee(user);
-						LOG.debug("Property <assignee> populated with: " + newBug.getAssignee()); //$NON-NLS-1$
+					}
+					if("depends_on".equals(key)){
+						final Object[] idObjs = (Object[]) bug.get(key);
+						final Set<Integer> ids = new TreeSet<Integer>();
+						for(int i = 0; i < idObjs.length; i++){
+							ids.add((Integer) idObjs[i]);
+						}
+						newBug.setDependsOn(ids);
 					}
 
 					// else {
