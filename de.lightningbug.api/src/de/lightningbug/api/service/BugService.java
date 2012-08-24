@@ -12,14 +12,19 @@ import org.apache.xmlrpc.XmlRpcException;
 
 import de.lightningbug.api.BugzillaClient;
 import de.lightningbug.api.domain.Bug;
+import de.lightningbug.api.domain.User;
 import de.lightningbug.api.util.HashArray;
 import de.lightningbug.api.util.HashArray.NoHashArrayException;
 
-public class BugService {
+/**
+ * TODO Complete documentation!
+ *
+ * @author Sebastian Kirchner (AutoVision GmbH)
+ *
+ */
+public class BugService extends AbstractService {
 
 	protected final static Log LOG = LogFactory.getLog(ProductService.class);
-
-	protected BugzillaClient client = null;
 
 	/**
 	 * TODO isn't that stored in the cache???
@@ -27,57 +32,73 @@ public class BugService {
 	 * Cache for the names and the legal values of all bug fields
 	 */
 	private HashArray legalBugFields = null;
-
+	
 	/**
 	 * @param client
-	 *            the client used by the factory to query information from the
+	 *            the client used by the service to query information from the
 	 *            bugzilla instance
 	 */
-	public BugService(final BugzillaClient client) {
-		if(client == null){
-			throw new IllegalArgumentException("Paramter <client> must not be mull"); //$NON-NLS-1$
-		}
-		this.client = client;
+	public BugService(BugzillaClient client) {
+		super(client);
 	}
 
 	/**
-	 * TODO Docu
+	 * TODO add documentation
 	 * 
 	 * To get a list of all bugs just pass <code>null</code>
 	 * 
 	 * @param params
 	 * @return
 	 */
-	public List<Bug> search(final Map<String, Object[]> searchParams) {
+	public List<Bug> search(final Map<String, Object> searchParams) {
 
 		// convert null into an empty map of parameters
-		final Map<String, Object[]> params = searchParams == null ? new HashMap<String, Object[]>()
+		final Map<String, Object> params = searchParams == null ? new HashMap<String, Object>()
 				: searchParams;
 
 		final List<Bug> results = new ArrayList<Bug>();
 
 		try{
+			//search for the bugs
 			final HashArray bugs = new HashArray(
 			// TODO may be null
 					((Map<?, ?>) this.client.execute("Bug.search", params)).get("bugs")); //$NON-NLS-1$ //$NON-NLS-2$
 
+			final Map<String, User> userCache = new HashMap<String, User>();
+			final UserService userService = new UserService(this.client);
+						
 			// create bug objects 4 every item in the array
 			for(final Map<?, ?> bug : bugs){
 				final Bug newBug = new Bug();
 				results.add(newBug);
-
+				
 				for(final Object key : bug.keySet()){
 					if("summary".equals(key)){ //$NON-NLS-1$
 						newBug.setSummary((String) bug.get(key));
-						LOG.debug("Field <summary> populated with: " + newBug.getSummary()); //$NON-NLS-1$
+						LOG.debug("Property <summary> populated with: " + newBug.getSummary()); //$NON-NLS-1$
 					}
 					if("estimated_time".equals(key)){ //$NON-NLS-1$
 						newBug.setEstimatedTime((Double) bug.get(key));
-						LOG.debug("Field <estimated_time> populated with: " + newBug.getEstimatedTime()); //$NON-NLS-1$
+						LOG.debug("Property <estimated_time> populated with: " + newBug.getEstimatedTime()); //$NON-NLS-1$
 					}
 					if("id".equals(key)){ //$NON-NLS-1$
 						newBug.setId((Integer) bug.get(key));
-						LOG.debug("Field <id> populated with: " + newBug.getId()); //$NON-NLS-1$
+						LOG.debug("Property <id> populated with: " + newBug.getId()); //$NON-NLS-1$
+					}
+					if("status".equals(key)){ //$NON-NLS-1$
+						newBug.setStatus((String) bug.get(key));
+						LOG.debug("Property <status> populated with: " + newBug.getId()); //$NON-NLS-1$
+					}
+					if("assigned_to".equals(key)){ //$NON-NLS-1$
+						
+						final String loginName = (String) bug.get(key);
+						User user = userCache.get(loginName);
+						if(user == null){
+							user = userService.getUser(loginName);
+							userCache.put(loginName, user);
+						}
+						newBug.setAssignee(user);
+						LOG.debug("Property <assignee> populated with: " + newBug.getAssignee()); //$NON-NLS-1$
 					}
 
 					// else {

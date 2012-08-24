@@ -26,11 +26,9 @@ import de.lightningbug.api.util.HashArray.NoHashArrayException;
  * @author Sebastian Kirchner
  * 
  */
-public class ProductService {
+public class ProductService extends AbstractService {
 
 	protected final static Log LOG = LogFactory.getLog(ProductService.class);
-
-	protected BugzillaClient client = null;
 
 	protected BugService bugService = null;
 
@@ -45,7 +43,7 @@ public class ProductService {
 
 	/**
 	 * @param client
-	 *            the client used by the factory to query information from the
+	 *            the client used by the service to query information from the
 	 *            bugzilla instance
 	 */
 	public ProductService(final BugzillaClient client) {
@@ -59,10 +57,7 @@ public class ProductService {
 	 * @param useLocalCache
 	 */
 	public ProductService(final BugzillaClient client, final boolean useLocalCache) {
-		super();
-		if(client == null){
-			throw new IllegalArgumentException("Paramter <client> must not be mull"); //$NON-NLS-1$
-		}
+		super(client);
 		this.client = client;
 		this.useLocalCache = useLocalCache;
 	}
@@ -106,14 +101,13 @@ public class ProductService {
 		}
 		return this.products;
 	}
-	
 
 	protected List<Product> loadProducts() {
 		final List<Product> prods = new LinkedList<Product>();
 		try{
 			// Param = a hash containing one item, ids, that is an array of
 			// product ids.
-			final HashMap<String, Object[]> params = new HashMap<String, Object[]>();
+			final HashMap<String, Object> params = new HashMap<String, Object>();
 			params.put("ids", this.getAccessibleProductIds()); //$NON-NLS-1$
 			final Map<?, ?> result = (Map<?, ?>) this.client.execute("Product.get", params); //$NON-NLS-1$
 

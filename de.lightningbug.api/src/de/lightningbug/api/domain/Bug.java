@@ -19,14 +19,29 @@ import de.lightningbug.api.BugzillaClient;
 public class Bug implements Comparable<Bug> {
 
 	/**
+	 * Constant for the name of the property
+	 */
+	public static final String ASSIGNEE = "assignee"; //$NON-NLS-1$
+
+	/**
 	 * Constant for the name of the appropriate bean property
 	 */
 	public static final String COMPONENT = "component"; //$NON-NLS-1$
 
 	/**
+	 * Konstante des Namens der Eigenschaft {@link Bug#dependsOn}
+	 */
+	public static final String DEPENDS_ON = "dependsOn"; //$NON-NLS-1$
+
+	/**
 	 * Constant for the name of the appropriate bean property
 	 */
 	public static final String DESCRIPTION = "description"; //$NON-NLS-1$
+
+	/**
+	 * Constant for the name of the appropriate bean property
+	 */
+	public static final String ESTIMATED_TIME = "estimatedTime"; //$NON-NLS-1$
 
 	/**
 	 * Constant for the name of the appropriate bean property
@@ -39,9 +54,14 @@ public class Bug implements Comparable<Bug> {
 	public static final String PRODUCT = "product"; //$NON-NLS-1$
 
 	/**
-	 * Konstante des Namens der Eigenschaft {@link Bug#severity}
+	 * Constant for the name of the appropriate bean property
 	 */
 	public static final String SEVERITY = "severity"; //$NON-NLS-1$
+
+	/**
+	 * Constant for the name of the appropriate bean property
+	 */
+	public static final String STATUS = "status"; //$NON-NLS-1$
 
 	/**
 	 * Constant for the name of the appropriate bean property
@@ -53,12 +73,59 @@ public class Bug implements Comparable<Bug> {
 	 */
 	public static final String VERSION = "version"; //$NON-NLS-1$
 
-	/**
-	 * Konstante des Namens der Eigenschaft {@link Bug#dependsOn}
-	 */
-	public static final String DEPENDS_ON = "dependsOn"; //$NON-NLS-1$
+	private User assignee;
+
+	private String component;
 
 	private Set<Bug> dependsOn;
+
+	private String description;
+
+	private Double estimatedTime;
+
+	private Integer id;
+
+	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
+	private Product product;
+
+	private String severity;
+
+	private String status;
+
+	private String summary;
+
+	private String version;
+
+	@Override
+	public int compareTo(final Bug bug) {
+		if(bug == null){
+			return 0;
+		}
+		if(this.getId() == null){
+			if(bug.getId() == null){
+				return 0;
+			}
+			return -1;
+		}
+		return this.getId().compareTo(bug.getId());
+	}
+
+	/**
+	 * Getter for the user to whom the bug is assigned to
+	 * 
+	 * @return der the user to whom the bug is assigned to
+	 */
+	public User getAssignee() {
+		return this.assignee;
+	}
+
+	/**
+	 * @return The name of a component in the product
+	 */
+	public String getComponent() {
+		return this.component;
+	}
 
 	/**
 	 * Gibt den Wert der Eigenschaft {@link Bug#dependsOn} zurück.
@@ -70,47 +137,6 @@ public class Bug implements Comparable<Bug> {
 	}
 
 	/**
-	 * Setzt den Wert der Eigenschaft {@link Bug#dependsOn}.
-	 * 
-	 * @param dependsOn
-	 *            der Wert der Eigenschaft {@link Bug#dependsOn}
-	 */
-	public void setDependsOn(final Set<Bug> dependsOn) {
-		final Set<Bug> oldValue = this.dependsOn;
-		this.dependsOn = dependsOn;
-	}
-
-	/**
-	 * Constant for the name of the appropriate bean property
-	 */
-	public static final String ESTIMATED_TIME = "estimatedTime"; //$NON-NLS-1$
-
-	private String component;
-
-	private String description;
-
-	private Integer id;
-
-	private Double estimatedTime;
-
-	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-
-	private Product product;
-
-	private String severity;
-
-	private String summary;
-
-	private String version;
-
-	/**
-	 * @return The name of a component in the product
-	 */
-	public String getComponent() {
-		return this.component;
-	}
-
-	/**
 	 * @return The initial description for this bug. Some Bugzilla installations
 	 *         require this to not be blank.
 	 */
@@ -119,17 +145,17 @@ public class Bug implements Comparable<Bug> {
 	}
 
 	/**
-	 * @return The id of the bug
-	 */
-	public Integer getId() {
-		return this.id;
-	}
-
-	/**
 	 * @return The time estimated for the completion of this bug
 	 */
 	public Double getEstimatedTime() {
 		return this.estimatedTime;
+	}
+
+	/**
+	 * @return The unique numeric id of this bug.
+	 */
+	public Integer getId() {
+		return this.id;
 	}
 
 	/**
@@ -147,6 +173,13 @@ public class Bug implements Comparable<Bug> {
 	}
 
 	/**
+	 * @return The current status of the bug.
+	 */
+	public String getStatus() {
+		return this.status;
+	}
+
+	/**
 	 * @return A brief description of the bug being filed.
 	 */
 	public String getSummary() {
@@ -161,13 +194,37 @@ public class Bug implements Comparable<Bug> {
 	}
 
 	/**
+	 * Setter for the user to whom the bug is assigned to
+	 * 
+	 * @param assignee
+	 *            the user to whom the bug is assigned to
+	 */
+	public void setAssignee(final User assignee) {
+		final User oldValue = this.assignee;
+		this.assignee = assignee;
+		this.pcs.firePropertyChange(ASSIGNEE, oldValue, this.assignee);
+	}
+
+	/**
 	 * @param component
 	 *            The name of a component in the product
 	 */
 	public void setComponent(final String component) {
 		final String oldValue = this.component;
 		this.component = component;
-		pcs.firePropertyChange(COMPONENT, oldValue, this.component);
+		this.pcs.firePropertyChange(COMPONENT, oldValue, this.component);
+	}
+
+	/**
+	 * Setzt den Wert der Eigenschaft {@link Bug#dependsOn}.
+	 * 
+	 * @param dependsOn
+	 *            der Wert der Eigenschaft {@link Bug#dependsOn}
+	 */
+	public void setDependsOn(final Set<Bug> dependsOn) {
+		final Set<Bug> oldValue = this.dependsOn;
+		this.dependsOn = dependsOn;
+		this.pcs.firePropertyChange(DEPENDS_ON, oldValue, this.dependsOn);
 	}
 
 	/**
@@ -178,42 +235,7 @@ public class Bug implements Comparable<Bug> {
 	public void setDescription(final String description) {
 		final String oldValue = this.description;
 		this.description = description;
-		pcs.firePropertyChange(DESCRIPTION, oldValue, this.description);
-	}
-
-	/**
-	 * Setter for the severity of this bug. All legal values for this field can
-	 * be queried using {@link BugzillaClient#getAll(Class)}.
-	 * <p>
-	 * Example:
-	 * 
-	 * <pre>
-	 * 
-	 * 
-	 * 
-	 * 
-	 * final List&lt;Severity&gt; severities = client.getAll(Severity.class);
-	 * </pre>
-	 * 
-	 * </p>
-	 * 
-	 * @param severity
-	 *            the severity of the bug
-	 */
-	public void setSeverity(final String severity) {
-		final String oldValue = this.severity;
-		this.severity = severity;
-		pcs.firePropertyChange(SEVERITY, oldValue, this.severity);
-	}
-
-	/**
-	 * @param id
-	 *            The id of the bug
-	 */
-	public void setId(final Integer id) {
-		final Integer oldValue = this.id;
-		this.id = id;
-		this.pcs.firePropertyChange(ID, oldValue, this.id);
+		this.pcs.firePropertyChange(DESCRIPTION, oldValue, this.description);
 	}
 
 	/**
@@ -227,6 +249,16 @@ public class Bug implements Comparable<Bug> {
 	}
 
 	/**
+	 * @param id
+	 *            The unique numeric id of this bug.
+	 */
+	public void setId(final Integer id) {
+		final Integer oldValue = this.id;
+		this.id = id;
+		this.pcs.firePropertyChange(ID, oldValue, this.id);
+	}
+
+	/**
 	 * <p>
 	 * All registered products ca be queried by using the method
 	 * {@link BugzillaClient#getAll(Class)}.
@@ -235,6 +267,17 @@ public class Bug implements Comparable<Bug> {
 	 * Example:
 	 * 
 	 * <pre>
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
 	 * 
 	 * 
 	 * 
@@ -255,11 +298,45 @@ public class Bug implements Comparable<Bug> {
 	public void setProduct(final Product product) {
 		final Product oldValue = this.product;
 		this.product = product;
-		pcs.firePropertyChange(PRODUCT, oldValue, this.product);
+		this.pcs.firePropertyChange(PRODUCT, oldValue, this.product);
 		if(this.getVersion() != null && product != null
 				&& !product.getVersions().contains(this.getVersion())){
 			this.setVersion(null);
 		}
+	}
+
+	/**
+	 * Setter for the severity of this bug. All legal values for this field can
+	 * be queried using {@link BugzillaClient#getAll(Class)}.
+	 * <p>
+	 * Example:
+	 * 
+	 * <pre>
+	 * 
+	 * 
+	 * 
+	 * final List&lt;Severity&gt; severities = client.getAll(Severity.class);
+	 * </pre>
+	 * 
+	 * </p>
+	 * 
+	 * @param severity
+	 *            the severity of the bug
+	 */
+	public void setSeverity(final String severity) {
+		final String oldValue = this.severity;
+		this.severity = severity;
+		this.pcs.firePropertyChange(SEVERITY, oldValue, this.severity);
+	}
+
+	/**
+	 * @param status
+	 *           The current status of the bug.
+	 */
+	public void setStatus(final String status) {
+		final String oldValue = this.status;
+		this.status = status;
+		this.pcs.firePropertyChange(STATUS, oldValue, this.status);
 	}
 
 	/**
@@ -269,7 +346,7 @@ public class Bug implements Comparable<Bug> {
 	public void setSummary(final String summary) {
 		final String oldValue = this.summary;
 		this.summary = summary;
-		pcs.firePropertyChange(SUMMARY, oldValue, this.summary);
+		this.pcs.firePropertyChange(SUMMARY, oldValue, this.summary);
 	}
 
 	/**
@@ -288,54 +365,27 @@ public class Bug implements Comparable<Bug> {
 		// product and version is not null
 		if(this.getProduct() != null && this.version != null
 				&& !this.getProduct().getVersions().contains(version)){
-			final String pattern = "The product {0} doesn't ship in the version {1}";
+			final String pattern = "The product {0} doesn't ship in the version {1}"; //$NON-NLS-1$
 			final String message = MessageFormat.format(pattern, this.getProduct().getName(),
 					version);
 			throw new IllegalArgumentException(message);
 		}
 		final Object oldValue = this.version;
 		this.version = version;
-		pcs.firePropertyChange(VERSION, oldValue, this.version);
+		this.pcs.firePropertyChange(VERSION, oldValue, this.version);
 	}
 
-	/**
-	 * Constructs a <code>String</code> with all attributes in name = value
-	 * format.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return a <code>String</code> representation of this object.
+	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		final String TAB = ", ";
-		final StringBuilder retValue = new StringBuilder();
-		retValue.append(this.getClass().getName()).append("[").append("component=")
-				.append(this.component == null ? "null" : this.component.toString()).append(TAB)
-				.append("description=")
-				.append(this.description == null ? "null" : this.description.toString())
-				.append(TAB).append("id=").append(this.id == null ? "null" : this.id.toString())
-				.append(TAB).append("pcs=").append(this.pcs == null ? "null" : this.pcs.toString())
-				.append(TAB).append("product=")
-				.append(this.product == null ? "null" : this.product.toString()).append(TAB)
-				.append("severity=")
-				.append(this.severity == null ? "null" : this.severity.toString()).append(TAB)
-				.append("summary=").append(this.summary == null ? "null" : this.summary.toString())
-				.append(TAB).append("version=")
-				.append(this.version == null ? "null" : this.version.toString()).append(TAB)
-				.append("]");
-		return retValue.toString();
+		return "Bug [component=" + this.component + ", dependsOn=" + this.dependsOn + ", description=" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+				+ this.description
+				+ ", estimatedTime=" + this.estimatedTime + ", id=" + this.id + ", pcs=" + this.pcs //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+				+ ", product=" + this.product + ", severity=" + this.severity + ", summary=" + this.summary //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				+ ", version=" + this.version + "]"; //$NON-NLS-1$ //$NON-NLS-2$ 
 	}
-
-	@Override
-	public int compareTo(final Bug bug) {
-		if(bug == null)
-			return 0;
-		if(this.getId() == null){
-			if(bug.getId() == null){
-				return 0;
-			}
-			return -1;
-		}
-		return this.getId().compareTo(bug.getId());
-	}
-
 }
